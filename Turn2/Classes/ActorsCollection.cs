@@ -14,7 +14,7 @@ namespace Turn2.Classes
 
             Dictionary<int, Actor> ActorList = new Dictionary<int, Actor>()
             {
-                { 1, new Actor { Id = 1, Name = "Player", IsPlayeble = true, Hp = 100, Atk = 10, Def = 8} },
+                { 1, new Actor { Id = 1, Name = "Player", IsPlayeble = true, Hp = 100, Atk = 30, Def = 20} },
                 { 2, new Actor { Id = 2, Name = "Troll", IsPlayeble = false, Hp = 150, Atk = 8, Def = 6} },
                 { 3, new Actor { Id = 3, Name = "Goblin", IsPlayeble = false, Hp = 50, Atk = 15, Def = 10} }
 
