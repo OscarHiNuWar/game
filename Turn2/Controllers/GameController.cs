@@ -61,7 +61,7 @@ namespace Turn2.Controllers
 
             foreach (var enemies in combat.ActorList.Values.Where(x=> !x.IsPlayeble))
             {
-                EnemySkill(combat, random.Next(1, 4));
+                EnemySkill(combat, random.Next(1, 4), enemies.Id);
             }
             
             return Json(combat);
@@ -106,7 +106,7 @@ namespace Turn2.Controllers
             return combat;
         }
 
-        public CombatViewModel EnemySkill(CombatViewModel combat, int decision)
+        public CombatViewModel EnemySkill(CombatViewModel combat, int decision, int Id)
         {
             //Resolucion del combate version 3
 
@@ -124,25 +124,25 @@ namespace Turn2.Controllers
             var SkillStats = combat.SkillList.Values
                 .Where(x => x.Id == decision)
                 .Select(a => new { a.Name, a.Damage })
-                ;
+                .Single();
 
             var newDamage = combat.ActorList.Values
-               .Where(isPlayeble => !isPlayeble.IsPlayeble)
+               .Where(isPlayeble => !isPlayeble.IsPlayeble && isPlayeble.Id == Id)
                .Select(x => x.Atk)
-               ;
+               .Single();
 
             var playerStats = combat.ActorList.Values
                 .Where(x => x.IsPlayeble)
                 .Select(y => new { y.Def, y.Hp })
                 .First();
 
-            var damage = /*(SkillStats.Damage + newDamage)*/ - playerStats.Def;
+            var damage = (SkillStats.Damage + newDamage) - playerStats.Def;
 
             damage = (damage <= 0) ? 1 : damage;
 
-            combat.ActorList[1].Hp = playerStats.Hp;
+            combat.ActorList[1].Hp = playerStats.Hp - damage;
 
-            combat.Messages.Add("Enemy has used /**/ and did " + damage + " Damage!");
+            combat.Messages.Add("Enemy has used "+ SkillStats.Name + " and did " + damage + " Damage!");
 
             return combat;
         }
