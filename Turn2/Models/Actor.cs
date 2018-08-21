@@ -12,6 +12,7 @@ namespace Turn2.Models
         public int Hp { get; set; }
         public int Atk { get; set; }
         public int Def { get; set; }
+        //public int Agi { get; set; }
         public string Name { get; set; }
     }
 }
