@@ -11,12 +11,12 @@ namespace Turn2.ViewModels
     {
         //public Player player { get; set; }
         //public Enemy enemy { get; set; }
-        public Actor actor { get; set; }
-        public Dictionary<int, Actor> ActorList { get; set; }
+        //public Actor actor { get; set; }
+        public List<Actor> ActorList { get; set; }
+        public List<Skills> SkillList { get; set; }
+        public List<string> Messages { get; set; }
         public string Skill { get; set; }
         public string SelectedEnemy { get; set; }
-        public Dictionary<int, Skills> SkillList { get; set; }
-        public List<string> Messages { get; set; }
 
     }
 }

@@ -8,15 +8,15 @@ namespace Turn2.Classes
 {
     public class ActorsCollection : Actor
     {
-        public Dictionary<int, Actor> ActorList()
+        public List<Actor> ActorList()
         {
             Actor actors = new Actor();
 
-            Dictionary<int, Actor> ActorList = new Dictionary<int, Actor>()
+            List<Actor> ActorList = new List<Actor>()
             {
-                { 1, new Actor { Id = 1, Name = "Player", IsPlayeble = true, Hp = 100, Atk = 30, Def = 20} },
-                { 2, new Actor { Id = 2, Name = "Troll", IsPlayeble = false, Hp = 150, Atk = 8, Def = 6} },
-                { 3, new Actor { Id = 3, Name = "Goblin", IsPlayeble = false, Hp = 50, Atk = 15, Def = 10} }
+                { new Actor { Id = 0, Name = "Player", IsPlayeble = true, Hp = 100, Atk = 30, Def = 20, Agi = 15 + new Random().Next(0,30) } },
+                { new Actor { Id = 1, Name = "Troll", IsPlayeble = false, Hp = 150, Atk = 8, Def = 6, Agi = 20 } },
+                { new Actor { Id = 2, Name = "Goblin", IsPlayeble = false, Hp = 50, Atk = 15, Def = 10, Agi = 15 } }
 
             };
 

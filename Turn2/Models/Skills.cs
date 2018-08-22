@@ -12,5 +12,6 @@ namespace Turn2.Models
         public int Damage { get; set; }
         public string Description { get; set; }
         //public bool IsMultiHit { get; set; }
+        public int Accuracy { get; set; }
     }
 }

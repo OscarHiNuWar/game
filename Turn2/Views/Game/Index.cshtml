@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Index";
-    var queryPlayer = Model.ActorList.Values.Where(a => a.IsPlayeble).Select(b => new { b.Hp, b.Atk }).Single();
+    var queryPlayer = Model.ActorList.Where(a => a.IsPlayeble).Select(b => new { b.Hp, b.Atk, b }).Single();
     //var queryEnemy = Model.ActorList.Values.Where(a => !a.IsPlayeble);
 
     /*var hp = queryPlayer.Select(b => b.Hp);
@@ -17,16 +17,24 @@
 
 <h1>Test</h1>
 
-<p class="form-control"> <span style="color: blue">Player</span> one has <span id="playerHp" style="color: green">@Html.DisplayFor(x => queryPlayer.Hp)</span>/100 HP and <span id="playerAtk">@Html.DisplayFor(x => queryPlayer.Atk)</span> Attack</p>
+<p class="form-control">
+    <span style="color: blue">Player</span> one has <span id="playerHp" style="color: green">@Html.DisplayFor(x => queryPlayer.Hp)</span>/<span id="totalHp"></span>
+    HP and <span id="playerAtk">@Html.DisplayFor(x => queryPlayer.Atk)</span>
+    Attack, @Html.DisplayFor(x => queryPlayer.b.Def) Defense and @Html.DisplayFor(x => queryPlayer.b.Agi) Agility
+</p>
 <br />
 <div class="progress">
     <div id="playerBar" width="100%" style="background-color: green; height: 20px"></div>
 </div>
 
-@foreach (var data in Model.ActorList.Values.Where(x => !x.IsPlayeble).Select(a => new { a.Hp, a.Atk, a.Name, a.Id }))
+@foreach (var data in Model.ActorList.Where(x => !x.IsPlayeble).Select(a => new { a.Hp, a.Atk, a.Name, a.Id, a }))
 {
     <!---->
-    <p class="form-control"> <span style="color: orangered">@data.Name</span> has <span id="enemyHp-@data.Id" style="color: green">@Html.DisplayFor(x => data.Hp)</span>/<span id="totalEnemyHp-@data.Id" ></span> HP and <span id="enemyAtk">@Html.DisplayFor(x => data.Atk) </span> Attack</p>
+    <p class="form-control">
+        <span style="color: orangered">@data.Name</span> has <span id="enemyHp-@data.Id" style="color: green">@Html.DisplayFor(x => data.Hp)</span>/<span id="totalEnemyHp-@data.Id"></span>
+        HP and <span id="enemyAtk">@Html.DisplayFor(x => data.Atk) </span>
+        Attack, @Html.DisplayFor(x => data.a.Def) Defense and @Html.DisplayFor(x => data.a.Agi) Agility
+    </p>
     <br />
     <div class="progress">
         <div id="enemyBar-@data.Id" width="100%" style="background-color: green; height: 20px"></div>
@@ -39,10 +47,10 @@
 <br /><br />
 <span id="enemyAction" style="color: red"></span>
 
-@Html.DropDownList("SkillsDropdown", new SelectList(Model.SkillList.Values.Select(x => x.Name)),
+@Html.DropDownList("SkillsDropdown", new SelectList(Model.SkillList.Select(x => x.Name)),
     "-- Select a Skill --", new { @class = "form-control", @style = "Width: 20%" })
 
-@Html.DropDownList("SelectedEnemy", new SelectList(Model.ActorList.Values.Where(x=> !x.IsPlayeble).Select(a=>a.Name)),
+@Html.DropDownList("SelectedEnemy", new SelectList(Model.ActorList.Where(x=> !x.IsPlayeble).Select(a=>a.Name)),
     "--Select an Eneny--", new { @class = "form-control", @style = "Width: 20%" })
 
 <!--<span id="modelo"> @Html.Raw(Json.Serialize(Model)) </span>-->
@@ -53,15 +61,19 @@
 <script>
 
     var modelo =  @Html.Raw(Json.Serialize(Model));
-    var playerHp = modelo.actorList[1].hp;
-    var enemyHps = ["", "" ,modelo.actorList[2].hp, modelo.actorList[3].hp];
+    var playerHp = modelo.actorList[0].hp;
+
+    $('#totalHp').html(playerHp);
+
+    var enemyHps = ["" ,modelo.actorList[1].hp, modelo.actorList[2].hp];
 
     $(document).ready(function () {
+
         var dropDown = document.getElementById("SkillsDropdown");
         var dropDownTwo = document.getElementById("SelectedEnemy");
 
+        $('#totalEnemyHp-1').html(enemyHps[1]);
         $('#totalEnemyHp-2').html(enemyHps[2]);
-        $('#totalEnemyHp-3').html(enemyHps[3]);
 
         dropDown.onchange = function () { DisplayValidationRule(this); };
         dropDownTwo.onchange = function () { DisplayValidationRule(this); };
@@ -81,6 +93,56 @@
         }
     });
 
+    function checkHp(data) {
+        var i = 0;
+        for (i; i <= 2; i++) {
+            if (!data.actorList[i].isPlayeble) {
+                if (data.actorList[i].hp <= (enemyHps[i] * 0.25)) {
+
+                    document.getElementById("enemyHp-" + i).style.color = "red";
+                    document.getElementById("enemyBar-" + i).style.backgroundColor = "red";
+                    document.getElementById("enemyBar-" + i).style.width = data.actorList[i].hp + '%';
+
+
+                } else if (data.actorList[i].hp <= (enemyHps[i] * 0.50)) {
+
+                    document.getElementById("enemyHp-" + i).style.color = "orange";
+                    document.getElementById("enemyBar-" + i).style.backgroundColor = "orange";
+                    document.getElementById("enemyBar-" + i).style.width = data.actorList[i].hp + '%';
+
+                } else if (data.actorList[i].hp >= (enemyHps[i] * 0.50)) {
+
+                    document.getElementById("enemyHp-" + i).style.color = "green";
+                    document.getElementById("enemyBar-" + i).style.width = data.actorList[i].hp + '%';
+
+                }
+
+                console.log(data.actorList[i].hp + " " + i + " " + enemyHps[i]);
+
+            } else {
+
+                if (data.actorList[1].hp <= (playerHp * 0.25)) {
+
+                    document.getElementById("playerHp").style.color = "red";
+                    document.getElementById("playerBar").style.backgroundColor = "red";
+                    document.getElementById("playerBar").style.width = data.actorList[0].hp + '%';
+
+                } else if (data.actorList[1].hp <= (playerHp * 0.50)) {
+
+                    document.getElementById("playerHp").style.color = "orange";
+                    document.getElementById("playerBar").style.backgroundColor = "orange";
+                    document.getElementById("playerBar").style.width = data.actorList[0].hp + '%';
+
+                } else {
+
+                    document.getElementById("playerHp").style.color = "green";
+                    document.getElementById("playerBar").style.width = data.actorList[0].hp + '%';
+                }
+
+                console.log(data.actorList[i].hp + " " + i + " " + enemyHps[i]);
+            }
+        }
+    }
 
     function EngageVersionUno()
     {
@@ -89,57 +151,18 @@
 
             data.skill = $('#SkillsDropdown').val();
 
-            console.log(enemyHps);
-            var i = 3;
-            for (i; i >= 1; i--) {
-                if (!data.actorList[i].isPlayeble) {
-                    if (data.actorList[i].hp <= (enemyHps[i] * 0.25)) {
+            checkHp(data);
 
-                        document.getElementById("enemyHp-" + i).style.color = "red";
-                        document.getElementById("enemyBar-" + i).style.backgroundColor = "red";
-                        document.getElementById("enemyBar-" + i).style.width = data.actorList[i].hp + '%';
+            $("#playerHp").html(data.actorList[0].hp);
 
-
-                    } else if (data.actorList[i].hp <= (enemyHps[i] * 0.50)) {
-
-                        document.getElementById("enemyHp-" + i).style.color = "orange";
-                        document.getElementById("enemyBar-" + i).style.backgroundColor = "orange";
-                        document.getElementById("enemyBar-" + i).style.width = data.actorList[i].hp + '%';
-
-                    } else if (data.actorList[i].hp >= (enemyHps[i] * 0.50)) {
-
-                        document.getElementById("enemyHp-" + i).style.color = "green";
-                        document.getElementById("enemyBar-" + i).style.width = data.actorList[i].hp + '%';
-
-                    }
-                    console.log(data.actorList[i].hp + " " + i + " " + enemyHps[i]);
-                } else {
-                    if (data.actorList[1].hp <= (playerHp * 0.25)) {
-                        document.getElementById("playerHp").style.color = "red";
-                        document.getElementById("playerBar").style.backgroundColor = "red";
-                        document.getElementById("playerBar").style.width = data.actorList[1].hp + '%';
-                    } else if (data.actorList[1].hp <= (playerHp * 0.50)) {
-                        document.getElementById("playerHp").style.color = "orange";
-                        document.getElementById("playerBar").style.backgroundColor = "orange";
-                        document.getElementById("playerBar").style.width = data.actorList[1].hp + '%';
-                    } else {
-                        document.getElementById("playerHp").style.color = "green";
-                        document.getElementById("playerBar").style.width = data.actorList[1].hp + '%';
-                    }
-
-                }
-
-            }
-
-            $("#playerHp").html(data.actorList[1].hp);
+            $("#enemyHp-1").html(data.actorList[1].hp);
 
             $("#enemyHp-2").html(data.actorList[2].hp);
 
-            $("#enemyHp-3").html(data.actorList[3].hp);
+            $("#playerAtk").html(data.actorList[0].atk);
 
-            $("#playerAtk").html(data.actorList[1].atk);
+            $("#enemyAtk").html(data.actorList[1].atk);
 
-            $("#enemyAtk").html(data.actorList[2].atk);
 
             $("#enemyAction").html(data.messages.pop() + "<br/> " + data.messages.pop());
 

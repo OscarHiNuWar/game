@@ -8,19 +8,19 @@ namespace Turn2.Classes
 {
     public class SkillsCollection : Skills
     { 
-        public Dictionary<int, Skills> SkillList()
+        public List<Skills> SkillList()
         {
+            //Coder notes: This was a Dictonary before
             
-            Skills Data = new Skills();
-            Actor Actor = new Actor();
+            //Skills Data = new Skills();
 
             /*Data = new Skills { Id = 1, Name = "Tackle", Damage = 20 };
             Data = new Skills { Id = 2, Name = "Kick", Damage = 15 };*/
-            Dictionary<int, Skills> list = new Dictionary<int, Skills>()
+            List<Skills> list = new List<Skills>()
             {
-                { 1, new Skills { Id = 1, Name = "Attack", Damage = 5, Description = "A basic nimble attack that does 5 dmg." } },
-                { 2, new Skills { Id = 2, Name = "Tackle", Damage = 20, Description = "A Bash attack." } },
-                { 3, new Skills { Id = 3, Name = "Kick", Damage = 15, Description = "An amazing kick right in the face."} }
+                { new Skills { Id = 1, Name = "Attack", Damage = 5, Accuracy = 90, Description = "A basic nimble attack." } },
+                { new Skills { Id = 2, Name = "Tackle", Damage = 20, Accuracy = 70, Description = "A Bash attack." } },
+                { new Skills { Id = 3, Name = "Kick", Damage = 15, Accuracy = 45, Description = "An amazing kick right in the face."} }
             };
 
 
